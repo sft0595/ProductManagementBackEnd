@@ -1,8 +1,12 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +23,23 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::apiResource('users', UserController::class);
+
+Route::post("login", [AuthController::class, 'login']);
+Route::post("register", [AuthController::class, 'register']);
+Route::apiResource('categories', CategoryController::class);
+Route::apiResource('products', ProductController::class);
+
+Route::group(['middleware' => 'auth:api'], function () {
+   Route::get('user', [UserController::class, 'currentUser']);
+   Route::post('user/info', [UserController::class, 'updateInfo']);
+   Route::post('user/password', [UserController::class, 'updatePassword']);
+
+   Route::apiResource('users', UserController::class);
+   Route::apiResource('roles', RoleController::class);
+});
+
+
+
 // Route::post("/users", [UserController::class, 'store'])->name('users.store');
 // Route::get("/users", [UserController::class, 'index'])->name('users.index');
 // Route::get("/users/{id}", [UserController::class, 'show'])->name('users.show');

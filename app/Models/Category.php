@@ -1,16 +1,11 @@
 <?php
 
-// @formatter:off
-/**
- * A helper file for your Eloquent Models
- * Copy the phpDocs from this file to the correct Model,
- * And remove them from this file, to prevent double declarations.
- *
- * @author Barry vd. Heuvel <barryvdh@gmail.com>
- */
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Kalnoy\Nestedset\NodeTrait;
 
-namespace App\Models{
 /**
  * App\Models\Category
  *
@@ -79,86 +74,15 @@ namespace App\Models{
  * @method static \Kalnoy\Nestedset\QueryBuilder|Category withoutRoot()
  * @mixin \Eloquent
  */
-	class Category extends \Eloquent {}
-}
+class Category extends Model
+{
+    use HasFactory, NodeTrait;
+    protected $guarded = [
+        'id',
+    ];
 
-namespace App\Models{
-/**
- * App\Models\Role
- *
- * @property int $id
- * @property string $role
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role query()
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereRole($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
- * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
- * @property-read int|null $users_count
- */
-	class Role extends \Eloquent {}
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }
-
-namespace App\Models{
-/**
- * App\Models\User
- *
- * @property int $id
- * @property string $FirstName
- * @property string $LastName
- * @property string $UserEmail
- * @property string|null $UserEmail_verified_at
- * @property string $UserPassword
- * @property string $UserPhone
- * @property string $UserAddress
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
- * @property-read int|null $tokens_count
- * @method static \Database\Factories\UserFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUserAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUserEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUserEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUserPassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUserPhone($value)
- * @mixin \Eloquent
- * @property string $firstname
- * @property string $lastname
- * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string $password
- * @property string $phone
- * @property string $address
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
- * @property-read int|null $clients_count
- * @method static \Illuminate\Database\Eloquent\Builder|User whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereFirstname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereLastname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User wherePhone($value)
- * @property int $role_id
- * @property-read \App\Models\Role $role
- * @method static \Illuminate\Database\Eloquent\Builder|User whereRoleId($value)
- */
-	class User extends \Eloquent {}
-}
-

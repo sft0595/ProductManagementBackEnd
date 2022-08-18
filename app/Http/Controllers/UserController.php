@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserCreateRequest;
-use App\Http\Requests\UserUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +18,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::paginate(5);
+        $users = User::all();
+        return UserResource::collection($users);
     }
 
     /**
@@ -36,12 +37,21 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserCreateRequest $request)
+    public function store(Request $request)
     {
-        $userCreated = user::create(
-            $request->only('FirstName', 'LastName', 'UserEmail', 'UserPhone', 'UserAddress') +
-                ['UserPassword' => Hash::make(1234)]
+        $request->validate([
+            'firstname' => 'required',
+            'lastname' =>  'required',
+            'email' => 'required|email',
+            'role_id' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+        ]);
+        $userCreated = User::create(
+            $request->only('firstname', 'lastname', 'email', 'role_id', 'phone', 'address') +
+                ['password' => Hash::make(1234)]
         );
+        $userCreated->image()->create(['image_url' => 'avatar.jpg']);
         return response($userCreated, Response::HTTP_CREATED);
     }
 
@@ -53,7 +63,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::findorfail($id);
+        $user = User::findOrFail($id);
+        return new UserResource($user);
     }
 
     /**
@@ -74,13 +85,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserUpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $userUpdated = User::findorfail($id);
+        $request->validate([
+            'email' => 'required|email',
+        ]);
         $userUpdated->update(
-            $request->only('FirstName', 'LastName', 'UserEmail', 'UserPhone', 'UserAddress')
+            $request->only('firstname', 'lastname', 'email', 'role_id', 'phone', 'address')
         );
-        return response($userUpdated, Response::HTTP_ACCEPTED);
+        return response(new UserResource($userUpdated), Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -91,7 +105,35 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $userDeleted = User::destroy($id);
-        return response($userDeleted, Response::HTTP_NO_CONTENT);
+        User::destroy($id);
+        return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+
+    public function currentUser()
+    {
+        return new UserResource(Auth::user());
+    }
+
+    public function updateInfo(Request $request)
+    {
+        $userUpdated = Auth::user();
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        $userUpdated->update(
+            $request->only('firstname', 'lastname', 'email', 'phone', 'address')
+        );
+        return response(new UserResource($userUpdated), Response::HTTP_ACCEPTED);
+    }
+
+
+    public function updatePassword(Request $request)
+    {
+        $userUpdated = Auth::user();
+        $userUpdated->update(
+            $request->Hash::make($request->password)
+        );
+        return response(new UserResource($userUpdated), Response::HTTP_ACCEPTED);
     }
 }
