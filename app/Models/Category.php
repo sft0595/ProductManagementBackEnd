@@ -77,10 +77,18 @@ use Kalnoy\Nestedset\NodeTrait;
 class Category extends Model
 {
     use HasFactory, NodeTrait;
+    // protected $hidden = ['pivot'];
     protected $guarded = [
         'id',
     ];
 
+    //categories belongs to many attributes 
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class);
+    }
+
+    // category belongs to many products
     public function products()
     {
         return $this->belongsToMany(Product::class);

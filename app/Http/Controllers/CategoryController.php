@@ -17,7 +17,7 @@ class CategoryController extends Controller
     {
         //
         $category = Category::get()->toTree();
-        return $category;
+        return  $category;
     }
 
     /**
@@ -66,7 +66,18 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        //products by category
+        $categories = $category->whereAncestorOrSelf($category)->get();
+        $products = [];
+        foreach ($categories as $branch) {
+            $branch_prod = $branch->products()->get();
+            if (count($branch_prod) > 0) {
+                array_push($products, $branch_prod);
+            }
+        }
+        foreach ($products as $prod) {
+            return $prod;
+        }
     }
 
     /**

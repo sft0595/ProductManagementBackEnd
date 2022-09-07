@@ -21,7 +21,7 @@ class ProductSeeder extends Seeder
             ->create();
 
         foreach (Product::all() as $product) {
-            $categories = Category::inRandomOrder()->first()->id;
+            $categories = Category::inRandomOrder()->whereRaw('categories._rgt - categories._lft = 1')->first()->id;
             $product->categories()->attach($categories);
         }
     }

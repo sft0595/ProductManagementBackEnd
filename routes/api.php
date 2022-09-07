@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\AttrvalueController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
@@ -7,6 +9,7 @@ use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Models\Attrvalue;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +31,8 @@ Route::post("login", [AuthController::class, 'login']);
 Route::post("register", [AuthController::class, 'register']);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
+Route::apiResource('attributes', AttributeController::class);
+Route::apiResource('attrvalues', AttrvalueController::class);
 
 Route::group(['middleware' => 'auth:api'], function () {
    Route::get('user', [UserController::class, 'currentUser']);
