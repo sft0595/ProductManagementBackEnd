@@ -20,7 +20,8 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'meta_description' => $this->meta_description,
             'categories' => CategoryResource::collection($this->categories),
-            'attrvalues' => $this->attrvalues()->with('attribute')->get()
+            'attrvalues' => $this->attrvalues()->with('attribute')->get(),
+            'varities' => $this->varities()->get(),
         ];
     }
 }

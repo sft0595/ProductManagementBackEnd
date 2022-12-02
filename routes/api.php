@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Models\Attrvalue;
+use App\Models\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::apiResource('products', ProductController::class);
 Route::apiResource('attributes', AttributeController::class);
 Route::apiResource('attrvalues', AttrvalueController::class);
 
+
+Route::get('category_desc/{category}', [CategoryController::class, 'category_desc'])->name('categories.category_desc');
 Route::group(['middleware' => 'auth:api'], function () {
    Route::get('user', [UserController::class, 'currentUser']);
    Route::post('user/info', [UserController::class, 'updateInfo']);

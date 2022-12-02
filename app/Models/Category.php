@@ -78,9 +78,7 @@ class Category extends Model
 {
     use HasFactory, NodeTrait;
     // protected $hidden = ['pivot'];
-    protected $guarded = [
-        'id',
-    ];
+    protected $guarded = [];
 
     //categories belongs to many attributes 
     public function attributes()

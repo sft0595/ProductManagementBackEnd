@@ -69,36 +69,37 @@ class ProductController extends Controller
                                 // making attribute value lowercase
                                 $value = strtolower($attrvalue);
                                 // checking if value already exist, if not adding it to the table
-                                $valueExist = Attrvalue::where('value', $value)->first();
-                                $product->attrvalues()->syncWithoutDetaching($valueExist);
-                                if (!$valueExist) {
-                                    $attrvalues = $attr->attrvalues()->create(['value' => $value]);
-                                    $product->attrvalues()->syncWithoutDetaching($valueExist);
+                                $attributeValue = Attrvalue::where('value', $value)->first();
+                                if (!$attributeValue) {
+                                    $attributeValue = $attr->attrvalues()->create(['value' => $value]);
                                 }
+                                $product->attrvalues()->syncWithoutDetaching($attributeValue);
                             }
                         } else {
                             // creating new attribute if not exist
                             $attr = Attribute::create(['title' => $title]);
-                            $attr->categories()->attach($category);
+                            $attr->categories()->syncWithoutDetaching($category);
 
                             foreach ($attrvalues as $attrvalue) {
-
                                 // making attribute value lowercase
                                 $value = strtolower($attrvalue);
                                 // checking if value already exist, if not adding it to the table
-                                $valueExist = Attrvalue::where('value', $value)->first();
-                                $product->attrvalues()->syncWithoutDetaching($valueExist);
-                                if (!$valueExist) {
-                                    $attrvalues = $attr->attrvalues()->create(['value' => $value]);
-                                    $product->attrvalues()->syncWithoutDetaching($valueExist);
+                                $attributeValue = Attrvalue::where('value', $value)->first();
+                                if (!$attributeValue) {
+                                    $attributeValue = $attr->attrvalues()->create(['value' => $value]);
                                 }
+                                $product->attrvalues()->attach($attributeValue);
                             }
                         }
                     }
 
                     foreach ($request->variations as $variations) {
+                        $prod_code = $variations['product_code'];
+                        $prodCode_array = str_split($prod_code);
+                        sort($prodCode_array);
+                        $uniqueProdCode = $product->name . '_' . implode($prodCode_array); // abc
                         $varities = $product->varities()->create([
-                            'productcode' => $variations['product_code'],
+                            'productcode' => $uniqueProdCode,
                             'quantity' => $variations['quantity'],
                             'cost' => $variations['cost_price'],
                             'sell' => $variations['sell_price'],
@@ -163,7 +164,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $productDetail = Product::with('categories', 'attrvalues')->find($product->id);
+        $productDetail = Product::with('categories', 'attrvalues', 'varities')->find($product->id);
         $product = new ProductResource($productDetail);
         return response($product);
     }
@@ -199,16 +200,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $categories = $product->categories()->get();
-
-        foreach ($categories as $category) {
-            $product->categories()->detach($category->id);
-        }
-
-        $attrvalues = $product->attrvalues()->get();
-        foreach ($attrvalues as $attrvalue) {
-            $product->attrvalues()->detach($attrvalue->id);
-        }
         $product->destroy($product->id);
     }
 }

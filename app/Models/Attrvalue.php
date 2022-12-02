@@ -12,6 +12,7 @@ class Attrvalue extends Model
     // protected $hidden = ['pivot'];
     protected $guarded = [];
 
+    // attribute values belong to attribute
     public function attribute()
     {
         return $this->belongsTo(Attribute::class);

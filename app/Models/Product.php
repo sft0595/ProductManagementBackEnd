@@ -26,12 +26,10 @@ class Product extends Model
         return $this->hasMany(Varity::class);
     }
 
-    //product belongs to many attribute values
     public function attrvalues()
     {
         return $this->belongsToMany(Attrvalue::class);
     }
-
 
     //products can have many images in image table morphologically 
     public function images()

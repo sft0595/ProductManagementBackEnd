@@ -8,6 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
+
+    //finding the children of given category node with ancestors
+
+    public function category_desc(Category $category)
+    {
+        $nextBranch = Category::descendantsOf($category->id)->toTree();
+        return $nextBranch;
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +26,7 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        $category = Category::get()->toTree();
+        $category = Category::root()->where('parent_id', null)->get();
         return  $category;
     }
 
@@ -68,16 +78,17 @@ class CategoryController extends Controller
     {
         //products by category
         $categories = $category->whereAncestorOrSelf($category)->get();
-        $products = [];
-        foreach ($categories as $branch) {
-            $branch_prod = $branch->products()->get();
-            if (count($branch_prod) > 0) {
-                array_push($products, $branch_prod);
-            }
-        }
-        foreach ($products as $prod) {
-            return $prod;
-        }
+        // $products = [];
+        // foreach ($categories as $branch) {
+        //     $branch_prod = $branch->products()->get();
+        //     if (count($branch_prod) > 0) {
+        //         array_push($products, $branch_prod);
+        //     }
+        // }
+        // foreach ($products as $prod) {
+        //     return $prod;
+        // }
+        return $category;
     }
 
     /**
